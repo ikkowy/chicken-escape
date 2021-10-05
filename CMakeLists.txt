@@ -12,3 +12,6 @@ add_executable(chicken-escape
     src/main.cpp)
 
 target_link_libraries(chicken-escape ${SDL2_LIBRARIES})
+
+add_custom_command(TARGET chicken-escape POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/img/ $<TARGET_FILE_DIR:chicken-escape>)
