@@ -2,8 +2,6 @@
 
 #include "game.h"
 
-#define FRAME_RATE 60
-#define MSECS_PER_FRAME 1000 / FRAME_RATE
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
@@ -17,9 +15,6 @@ void Game::run()
 
     while (!quit)
     {
-        // Get the ticks in milliseconds
-        Uint32 ticks = SDL_GetTicks();
-
         // Handle all events that occurred
         SDL_Event event;
         while (SDL_PollEvent(&event)) handleEvent(event);
@@ -35,10 +30,6 @@ void Game::run()
 
         // Update the screen
         SDL_RenderPresent(renderer);
-
-        // Frame rate delay
-        Uint32 delta = SDL_GetTicks() - ticks;
-        if (MSECS_PER_FRAME > delta) SDL_Delay(MSECS_PER_FRAME - delta);
     }
 
     // Cleanup before quit
@@ -58,7 +49,7 @@ void Game::init()
         WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 
     // Create a window renderer
-    renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     // Load textures from bitmap files
     textures.chicken = loadTextureFromBitmap("chicken.bmp");
