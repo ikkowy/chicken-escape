@@ -34,10 +34,13 @@ private:
         bool down = false;
     } controls;
 
+    enum { LEFT, RIGHT };
+
     struct {
         int x = 0;
         int y = 0;
         int lifepoints = 5;
+        int orientation = RIGHT;
     } chicken;
 
     bool quit = false;

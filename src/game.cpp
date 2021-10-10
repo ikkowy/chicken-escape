@@ -112,8 +112,16 @@ void Game::handleEvent(SDL_Event &event)
 void Game::actions()
 {
     // Move the chicken
-    if (controls.left) chicken.x -= 5;
-    if (controls.right) chicken.x += 5;
+    if (controls.left)
+    {
+        chicken.orientation = LEFT;
+        chicken.x -= 5;
+    }
+    if (controls.right)
+    {
+        chicken.orientation = RIGHT;
+        chicken.x += 5;
+    }
     if (controls.up) chicken.y -= 5;
     if (controls.down) chicken.y += 5;
 }
@@ -127,7 +135,10 @@ void Game::draw()
 
     rect.x = chicken.x;
     rect.y = chicken.y;
-    SDL_RenderCopy(renderer, textures.chicken, NULL, &rect);
+    if (chicken.orientation == RIGHT)
+        SDL_RenderCopy(renderer, textures.chicken, NULL, &rect);
+    else if (chicken.orientation == LEFT)
+        SDL_RenderCopyEx(renderer, textures.chicken, NULL, &rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
     rect.x = 200;
     rect.y = 200;
