@@ -1,103 +1,96 @@
 /* Copyright (C) 2021 Chicken Escape authors */
 
+#include <stdio.h>
+#include <allegro5/allegro_image.h>
+
 #include "game.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+const float FPS = 60;
+
+void Game::init()
+{
+    al_init();
+
+    al_init_image_addon();
+
+    timer = al_create_timer(1.0 / FPS);
+
+    display = al_create_display(800, 600);
+
+    queue = al_create_event_queue();
+
+    al_install_keyboard();
+
+    al_register_event_source(queue, al_get_display_event_source(display));
+	al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_register_event_source(queue, al_get_keyboard_event_source());
+
+    bitmaps.chicken = al_load_bitmap("chicken.bmp");
+}
+
 void Game::run()
 {
-    // Initialize SDL, load textures
+    // Initialize the game
     init();
 
-    // Set the color for clearing the screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_flip_display();
 
-    while (!quit)
+    al_start_timer(timer);
+
+    // Main loop
+    while (running)
     {
-        // Handle all events that occurred
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) handleEvent(event);
+        ALLEGRO_EVENT event;
+		ALLEGRO_TIMEOUT timeout;
 
-        // Clear the screen
-        SDL_RenderClear(renderer);
+        al_wait_for_event(queue, &event);
 
-        // Perform game actions
-        actions();
+        switch (event.type)
+        {
+            case ALLEGRO_EVENT_TIMER:
+                actions();
+                redraw = true;
+                break;
 
-        // Draw the screen
-        draw();
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                running = false;
+                break;
 
-        // Update the screen
-        SDL_RenderPresent(renderer);
+            case ALLEGRO_EVENT_KEY_DOWN:
+                switch (event.keyboard.keycode)
+                {
+                    case ALLEGRO_KEY_LEFT: controls.left = true; break;
+                    case ALLEGRO_KEY_RIGHT: controls.right = true; break;
+                    case ALLEGRO_KEY_UP: controls.up = true; break;
+                    case ALLEGRO_KEY_DOWN: controls.down = true; break;
+                }
+                break;
+
+            case ALLEGRO_EVENT_KEY_UP:
+                switch (event.keyboard.keycode)
+                {
+                    case ALLEGRO_KEY_LEFT: controls.left = false; break;
+                    case ALLEGRO_KEY_RIGHT: controls.right = false; break;
+                    case ALLEGRO_KEY_UP: controls.up = false; break;
+                    case ALLEGRO_KEY_DOWN: controls.down = false; break;
+                }
+                break;
+        }
+
+		if (redraw)
+        {
+			draw();
+			al_flip_display();
+			redraw = false;
+		}
     }
 
     // Cleanup before quit
     cleanup();
-}
-
-void Game::init()
-{
-    // Initialize SDL
-    SDL_Init(SDL_INIT_EVERYTHING);
-
-    // Create a window with fixed size
-    window = SDL_CreateWindow(
-        "Chicken Escape",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-
-    // Create a window renderer
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    // Load textures from bitmap files
-    textures.chicken = loadTextureFromBitmap("chicken.bmp");
-    textures.floor = loadTextureFromBitmap("floor.bmp");
-    textures.wall = loadTextureFromBitmap("wall.bmp");
-}
-
-void Game::cleanup()
-{
-    SDL_DestroyTexture(textures.chicken);
-    SDL_DestroyTexture(textures.floor);
-    SDL_DestroyTexture(textures.wall);
-
-    SDL_DestroyRenderer(renderer);
-
-    SDL_DestroyWindow(window);
-
-    SDL_Quit();
-}
-
-void Game::handleEvent(SDL_Event &event)
-{
-    switch (event.type)
-    {
-        case SDL_QUIT:
-            quit = true;
-            break;
-
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.sym)
-            {
-                case SDLK_LEFT: controls.left = true; break;
-                case SDLK_RIGHT: controls.right = true; break;
-                case SDLK_UP: controls.up = true; break;
-                case SDLK_DOWN: controls.down = true; break;
-            }
-            break;
-
-        case SDL_KEYUP:
-            switch (event.key.keysym.sym)
-            {
-                case SDLK_LEFT: controls.left = false;  break;
-                case SDLK_RIGHT: controls.right = false; break;
-                case SDLK_UP: controls.up = false; break;
-                case SDLK_DOWN: controls.down = false; break;
-            }
-            break;
-    }
 }
 
 void Game::actions()
@@ -119,31 +112,11 @@ void Game::actions()
 
 void Game::draw()
 {
-    SDL_Rect rect;
+    al_clear_to_color(al_map_rgb(0, 0, 0));
 
-    rect.w = 64;
-    rect.h = 64;
-
-    rect.x = chicken.x;
-    rect.y = chicken.y;
-    if (chicken.orientation == RIGHT)
-        SDL_RenderCopy(renderer, textures.chicken, NULL, &rect);
-    else if (chicken.orientation == LEFT)
-        SDL_RenderCopyEx(renderer, textures.chicken, NULL, &rect, 0, NULL, SDL_FLIP_HORIZONTAL);
-
-    rect.x = 200;
-    rect.y = 200;
-    SDL_RenderCopy(renderer, textures.wall, NULL, &rect);
-
-    rect.x = 200;
-    rect.y = 136;
-    SDL_RenderCopy(renderer, textures.wall, NULL, &rect);
+    al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, 0);
 }
 
-SDL_Texture* Game::loadTextureFromBitmap(const char *path)
+void Game::cleanup()
 {
-    SDL_Surface *surface = SDL_LoadBMP(path);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    return texture;
 }

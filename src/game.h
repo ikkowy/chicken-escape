@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <SDL.h>
+#include <allegro5/allegro5.h>
 
 class Game
 {
@@ -12,20 +12,8 @@ public:
 private:
     void init();
     void cleanup();
-    void handleEvent(SDL_Event &event);
     void actions();
     void draw();
-
-    SDL_Texture* loadTextureFromBitmap(const char *path);
-
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-
-    struct {
-        SDL_Texture *chicken;
-        SDL_Texture *floor;
-        SDL_Texture *wall;
-    } textures;
 
     struct {
         bool left = false;
@@ -37,11 +25,20 @@ private:
     enum { LEFT, RIGHT };
 
     struct {
-        int x = 0;
-        int y = 0;
+        float x = 0;
+        float y = 0;
         int lifepoints = 5;
         int orientation = RIGHT;
     } chicken;
 
-    bool quit = false;
+    bool running = true;
+    bool redraw = false;
+
+    ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_DISPLAY *display = NULL;
+    ALLEGRO_EVENT_QUEUE *queue = NULL;
+
+    struct {
+        ALLEGRO_BITMAP *chicken;
+    } bitmaps;
 };

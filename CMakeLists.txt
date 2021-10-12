@@ -7,15 +7,11 @@ project(chicken-escape)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(SDL2 REQUIRED)
-
-include_directories(${SDL2_INCLUDE_DIRS})
-
 add_executable(chicken-escape
     src/main.cpp
     src/game.cpp)
 
-target_link_libraries(chicken-escape ${SDL2_LIBRARIES})
+target_link_libraries(chicken-escape allegro allegro_image)
 
 add_custom_command(TARGET chicken-escape POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/img/ $<TARGET_FILE_DIR:chicken-escape>)
