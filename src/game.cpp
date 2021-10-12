@@ -83,6 +83,7 @@ void Game::run()
 
 		if (redraw)
         {
+            al_clear_to_color(al_map_rgb(0, 0, 0));
 			draw();
 			al_flip_display();
 			redraw = false;
@@ -112,9 +113,10 @@ void Game::actions()
 
 void Game::draw()
 {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-
-    al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, 0);
+    if (chicken.orientation == RIGHT)
+        al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, 0);
+    else if (chicken.orientation == LEFT)
+        al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, ALLEGRO_FLIP_HORIZONTAL);
 }
 
 void Game::cleanup()
