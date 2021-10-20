@@ -29,6 +29,8 @@ void Game::init()
     al_register_event_source(queue, al_get_keyboard_event_source());
 
     bitmaps.chicken = al_load_bitmap("chicken.bmp");
+
+    al_set_display_icon(display, bitmaps.chicken);
 }
 
 void Game::run()
@@ -45,7 +47,6 @@ void Game::run()
     while (running)
     {
         ALLEGRO_EVENT event;
-		ALLEGRO_TIMEOUT timeout;
 
         al_wait_for_event(queue, &event);
 
@@ -81,7 +82,7 @@ void Game::run()
                 break;
         }
 
-		if (redraw)
+		if (redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(al_map_rgb(0, 0, 0));
 			draw();
