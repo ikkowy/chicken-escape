@@ -36,10 +36,13 @@ private:
     struct map {
         int block_width, block_height;
         int pixel_width, pixel_height;
+        float redundancy;
         std::vector<bool> walls;
         ALLEGRO_BITMAP *bitmap;
-        int x = 0, y = 0;
+        int x = 0, y = 0;   
     } map;
+    
+    
 
     bool running = true;
     bool redraw = false;
@@ -54,7 +57,7 @@ private:
         ALLEGRO_BITMAP *wall;
     } bitmaps;
 
-    void create_map(int bw, int bh);
+    void create_map(int bw, int bh, float redundancy);
     void build_maze();
     void draw_map();
     bool get_wall(int bx, int by);

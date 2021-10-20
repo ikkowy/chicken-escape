@@ -34,7 +34,7 @@ void Game::init()
 
     al_set_display_icon(display, bitmaps.chicken);
 
-    create_map(50, 30);
+    create_map(50, 30, 0.1);
     build_maze();
     draw_map();
 }
