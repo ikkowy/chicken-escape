@@ -2,7 +2,11 @@
 
 #pragma once
 
+#include <vector>
+
 #include <allegro5/allegro5.h>
+
+#define BLOCK_SIZE 64
 
 class Game
 {
@@ -22,14 +26,20 @@ private:
         bool down = false;
     } controls;
 
-    enum { LEFT, RIGHT };
-
     struct {
-        float x = 0;
-        float y = 0;
+        bool lookleft = false;
         int lifepoints = 5;
-        int orientation = RIGHT;
+        int x, y;
+        int speed = 5;
     } chicken;
+
+    struct map {
+        int block_width, block_height;
+        int pixel_width, pixel_height;
+        std::vector<bool> walls;
+        ALLEGRO_BITMAP *bitmap;
+        int x = 0, y = 0;
+    } map;
 
     bool running = true;
     bool redraw = false;
@@ -40,5 +50,13 @@ private:
 
     struct {
         ALLEGRO_BITMAP *chicken;
+        ALLEGRO_BITMAP *floor;
+        ALLEGRO_BITMAP *wall;
     } bitmaps;
+
+    void create_map(int bw, int bh);
+    void build_maze();
+    void draw_map();
+    bool get_wall(int bx, int by);
+    void set_wall(int bx, int by, bool val = true);
 };

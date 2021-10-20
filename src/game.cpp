@@ -5,8 +5,8 @@
 
 #include "game.h"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 const float FPS = 60;
 
@@ -18,7 +18,7 @@ void Game::init()
 
     timer = al_create_timer(1.0 / FPS);
 
-    display = al_create_display(800, 600);
+    display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     queue = al_create_event_queue();
 
@@ -29,8 +29,14 @@ void Game::init()
     al_register_event_source(queue, al_get_keyboard_event_source());
 
     bitmaps.chicken = al_load_bitmap("chicken.bmp");
+    bitmaps.floor = al_load_bitmap("floor.bmp");
+    bitmaps.wall = al_load_bitmap("wall.bmp");
 
     al_set_display_icon(display, bitmaps.chicken);
+
+    create_map(50, 30);
+    build_maze();
+    draw_map();
 }
 
 void Game::run()
@@ -97,27 +103,38 @@ void Game::run()
 
 void Game::actions()
 {
-    // Move the chicken
     if (controls.left)
     {
-        chicken.orientation = LEFT;
-        chicken.x -= 5;
+        map.x += chicken.speed;
+        chicken.lookleft = true;
     }
+
     if (controls.right)
     {
-        chicken.orientation = RIGHT;
-        chicken.x += 5;
+        map.x -= chicken.speed;
+        chicken.lookleft = false;
     }
-    if (controls.up) chicken.y -= 5;
-    if (controls.down) chicken.y += 5;
+
+    if (controls.up)
+    {
+        map.y += chicken.speed;
+    }
+
+    if (controls.down)
+    {
+        map.y -= chicken.speed;
+    }
+
+    chicken.x = SCREEN_WIDTH / 2 - 32;
+    chicken.y = SCREEN_HEIGHT / 2 - 32;
 }
 
 void Game::draw()
 {
-    if (chicken.orientation == RIGHT)
-        al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, 0);
-    else if (chicken.orientation == LEFT)
-        al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, ALLEGRO_FLIP_HORIZONTAL);
+    al_draw_bitmap(map.bitmap, map.x, map.y, 0);
+
+    int flags = chicken.lookleft ? ALLEGRO_FLIP_HORIZONTAL : 0;
+    al_draw_bitmap(bitmaps.chicken, chicken.x, chicken.y, flags);
 }
 
 void Game::cleanup()

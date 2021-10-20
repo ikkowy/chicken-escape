@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(chicken-escape
     src/main.cpp
-    src/game.cpp)
+    src/game.cpp
+    src/map.cpp)
 
 target_link_libraries(chicken-escape allegro allegro_image)
 
