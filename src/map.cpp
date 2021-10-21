@@ -213,7 +213,7 @@ void Game::build_maze()
                 set_wall(cur_p.x, cur_p.y + 1, 0);
             }
 
-            /*remove remoed wall from redundancy list*/
+            /*remove removed wall from redundancy list*/
             i = redundancy_walls.size() - 1;
             while (i >= 0)
             {
