@@ -5,6 +5,8 @@
 #include <vector>
 
 #include <allegro5/allegro5.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 
 #define BLOCK_SIZE 64
 
@@ -62,4 +64,11 @@ private:
     void draw_map();
     bool get_wall(int bx, int by);
     void set_wall(int bx, int by, bool val = true);
+    
+    /* Sound Design*/
+    bool is_mute;
+    ALLEGRO_SAMPLE* bgMusic;
+    void init_audio();
+    void play_audio();
+    void control_audio();
 };

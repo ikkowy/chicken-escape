@@ -2,7 +2,9 @@
 
 #include <stdio.h>
 #include <allegro5/allegro_image.h>
-
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+#include <iostream>
 #include "game.h"
 
 #define SCREEN_WIDTH 800
@@ -15,7 +17,7 @@ void Game::init()
     al_init();
 
     al_init_image_addon();
-
+    
     timer = al_create_timer(1.0 / FPS);
 
     display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -37,6 +39,8 @@ void Game::init()
     create_map(50, 30, 0.1);
     build_maze();
     draw_map();
+
+    init_audio();
 }
 
 void Game::run()
@@ -48,6 +52,8 @@ void Game::run()
 	al_flip_display();
 
     al_start_timer(timer);
+    
+    play_audio();
 
     // Main loop
     while (running)
@@ -74,6 +80,7 @@ void Game::run()
                     case ALLEGRO_KEY_RIGHT: controls.right = true; break;
                     case ALLEGRO_KEY_UP: controls.up = true; break;
                     case ALLEGRO_KEY_DOWN: controls.down = true; break;
+                    case ALLEGRO_KEY_M: control_audio(); break;
                 }
                 break;
 
@@ -86,6 +93,7 @@ void Game::run()
                     case ALLEGRO_KEY_DOWN: controls.down = false; break;
                 }
                 break;
+            
         }
 
 		if (redraw && al_is_event_queue_empty(queue))
@@ -140,3 +148,4 @@ void Game::draw()
 void Game::cleanup()
 {
 }
+
