@@ -18,7 +18,5 @@ target_link_libraries(chicken-escape allegro allegro_audio)
 target_link_libraries(chicken-escape allegro allegro_acodec)
 
 add_custom_command(TARGET chicken-escape POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/img/ $<TARGET_FILE_DIR:chicken-escape>)
-
-add_custom_command(TARGET chicken-escape POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/img/ $<TARGET_FILE_DIR:chicken-escape>
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/sfx/ $<TARGET_FILE_DIR:chicken-escape>)
