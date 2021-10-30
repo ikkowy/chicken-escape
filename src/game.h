@@ -68,7 +68,12 @@ private:
     /* Sound Design*/
     bool is_mute;
     ALLEGRO_SAMPLE* bgMusic;
+    ALLEGRO_SAMPLE_INSTANCE* bgMusicInstance;
+    unsigned int bgMusicPosition;
     void init_audio();
-    void play_audio();
+    void setup_music();
+    void play_music();
     void control_audio();
+    void control_music_volume(int vol);
+    float volume;
 };

@@ -53,7 +53,7 @@ void Game::run()
 
     al_start_timer(timer);
     
-    play_audio();
+    play_music();
 
     // Main loop
     while (running)
@@ -81,6 +81,8 @@ void Game::run()
                     case ALLEGRO_KEY_UP: controls.up = true; break;
                     case ALLEGRO_KEY_DOWN: controls.down = true; break;
                     case ALLEGRO_KEY_M: control_audio(); break;
+                    case ALLEGRO_KEY_PGDN: control_music_volume(1); break;
+                    case ALLEGRO_KEY_PGUP: control_music_volume(2); break;
                 }
                 break;
 
