@@ -85,4 +85,5 @@ private:
 
     float musicVolume;
     float sfxVolume;
+    ALLEGRO_KEYBOARD_STATE keyboard_state;
 };

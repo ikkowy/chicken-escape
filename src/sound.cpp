@@ -84,19 +84,34 @@ void Game::control_audio()
     }
 }
 
+/* adds walking sounds to chicken */
 void Game::sfx_walk(bool mov)
 {
+    /* check if a key is still pressed down */
+    al_get_keyboard_state(&keyboard_state);
+    for (int i = 82; i < 86; i++)
+    {
+        if(al_key_down(&keyboard_state, i))
+        {
+            bgMusicPosition = al_get_sample_instance_position(sfxWalkInstance);
+            mov = true;
+            i = 85;
+        }
+    }
+
+    /* play music from the correct position in the sound file */
     switch(mov)
     {
         case true: 
             al_set_sample_instance_position(sfxWalkInstance, sfxWalkPosition);
-            al_set_sample_instance_playing(sfxWalkInstance, true);
             break;
         case false:
-            bgMusicPosition = al_get_sample_instance_position(sfxWalkInstance);
-            al_set_sample_instance_playing(sfxWalkInstance, false);
+            sfxWalkPosition = al_get_sample_instance_position(sfxWalkInstance);
             break;
     }
+
+    /* play walking sounds */
+    al_set_sample_instance_playing(sfxWalkInstance, mov);
 }
 
 void Game::control_music_volume(int vol)

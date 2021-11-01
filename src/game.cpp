@@ -97,7 +97,6 @@ void Game::run()
                     case ALLEGRO_KEY_DOWN: controls.down = false; break;
                 }
                 break;
-            
         }
 
 		if (redraw && al_is_event_queue_empty(queue))
