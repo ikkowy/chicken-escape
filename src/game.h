@@ -68,12 +68,21 @@ private:
     /* Sound Design*/
     bool is_mute;
     ALLEGRO_SAMPLE* bgMusic;
+    ALLEGRO_SAMPLE* sfxWalk;
+
     ALLEGRO_SAMPLE_INSTANCE* bgMusicInstance;
+    ALLEGRO_SAMPLE_INSTANCE* sfxWalkInstance;
+
     unsigned int bgMusicPosition;
+    unsigned int sfxWalkPosition;
+
     void init_audio();
     void setup_music();
     void play_music();
+    void sfx_walk(bool mov);
     void control_audio();
     void control_music_volume(int vol);
-    float volume;
+
+    float musicVolume;
+    float sfxVolume;
 };

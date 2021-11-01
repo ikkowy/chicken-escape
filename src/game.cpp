@@ -74,6 +74,7 @@ void Game::run()
                 break;
 
             case ALLEGRO_EVENT_KEY_DOWN:
+                sfx_walk(true);
                 switch (event.keyboard.keycode)
                 {
                     case ALLEGRO_KEY_LEFT: controls.left = true; break;
@@ -87,6 +88,7 @@ void Game::run()
                 break;
 
             case ALLEGRO_EVENT_KEY_UP:
+                sfx_walk(false);
                 switch (event.keyboard.keycode)
                 {
                     case ALLEGRO_KEY_LEFT: controls.left = false; break;
