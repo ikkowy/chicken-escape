@@ -227,6 +227,18 @@ void Game::build_maze()
                 i--;
             }
         }
+
+        /*remove columns*/
+        for(i = 3; i < map.block_height - 1; i += 3)
+        {
+            for(j = 3; j < map.block_width - 1; j += 3)
+            {
+                if (!(get_wall(j-1,i) || get_wall(j,i-1) || get_wall(j+1,i) || get_wall(j,i+1)))
+                {
+                    set_wall(j,i,0);
+                }
+            }
+        }
     }
 }
 
