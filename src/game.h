@@ -32,7 +32,7 @@ private:
         bool lookleft = false;
         int lifepoints = 5;
         int x, y;
-        int speed = 5;
+        int speed = 4;
     } chicken;
 
     struct map {

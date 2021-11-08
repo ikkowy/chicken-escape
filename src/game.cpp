@@ -186,7 +186,7 @@ void Game::actions()
         else
         {
             
-            if ((chicken.y - map.y) % 64 == 0)
+            if ((chicken.x - map.x) % 64 == 0)
             {
                 if(!get_wall(new_x, new_y))
                 {
@@ -214,9 +214,9 @@ void Game::actions()
         else
         {
             
-            if ((chicken.y - map.y) % 64 == 0)
+            if ((chicken.x - map.x) % 64 == 0)
             {
-                if(!get_wall(new_x, new_y))
+                if(!get_wall(new_x, new_y + 1))
                 {
                     map.y -= chicken.speed;
                 }   
