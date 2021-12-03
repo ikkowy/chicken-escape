@@ -115,31 +115,31 @@ void Game::run()
 void Game::actions()
 {
     int cur_x, cur_y, new_x, new_y;
-    cur_x = static_cast<int>((chicken.x - map.x) / 64);
-    cur_y = static_cast<int>((chicken.y - map.y) / 64);
+    cur_x = static_cast<int>(chicken.maze_x / 64);
+    cur_y = static_cast<int>(chicken.maze_y / 64);
     if (controls.left)
     {
-        new_x = static_cast<int>((chicken.x - (map.x + chicken.speed)) / 64);
-        new_y = static_cast<int>((chicken.y - map.y) / 64);
+        new_x = static_cast<int>((chicken.maze_x - chicken.speed) / 64);
+        new_y = static_cast<int>(chicken.maze_y / 64);
         if (cur_x == new_x)
         {
-            map.x += chicken.speed;
+            chicken.maze_x -= chicken.speed;
         }
         else
         {
             
-            if ((chicken.y - map.y) % 64 == 0)
+            if (chicken.maze_y % 64 == 0)
             {
                 if(!get_wall(new_x, new_y))
                 {
-                    map.x += chicken.speed;
+                    chicken.maze_x -= chicken.speed;
                 }   
             }
             else
             {
                 if (!get_wall(new_x, new_y) && !get_wall(new_x, new_y + 1))
                 {
-                    map.x += chicken.speed;
+                    chicken.maze_x -= chicken.speed;
                 }
             }
         }
@@ -148,27 +148,27 @@ void Game::actions()
 
     if (controls.right)
     {
-        new_x = static_cast<int>((chicken.x - (map.x - chicken.speed)) / 64);
-        new_y = static_cast<int>((chicken.y - map.y) / 64);
+        new_x = static_cast<int>((chicken.maze_x + chicken.speed) / 64);
+        new_y = static_cast<int>(chicken.maze_y / 64);
         if (cur_x == new_x)
         {
-            map.x -= chicken.speed;
+            chicken.maze_x += chicken.speed;
         }
         else
         {
             
-            if ((chicken.y - map.y) % 64 == 0)
+            if (chicken.maze_y % 64 == 0)
             {
                 if(!get_wall(new_x + 1, new_y))
                 {
-                    map.x -= chicken.speed;
+                    chicken.maze_x += chicken.speed;
                 }   
             }
             else
             {
                 if (!get_wall(new_x + 1, new_y) && !get_wall(new_x + 1, new_y + 1))
                 {
-                    map.x -= chicken.speed;
+                    chicken.maze_x += chicken.speed;
                 }
             }
         }
@@ -177,27 +177,27 @@ void Game::actions()
 
     if (controls.up)
     {
-        new_x = static_cast<int>((chicken.x - map.x) / 64);
-        new_y = static_cast<int>((chicken.y - (map.y + chicken.speed)) / 64);
+        new_x = static_cast<int>(chicken.maze_x / 64);
+        new_y = static_cast<int>((chicken.maze_y - chicken.speed) / 64);
         if (cur_y == new_y)
         {
-            map.y += chicken.speed;
+            chicken.maze_y -= chicken.speed;
         }
         else
         {
             
-            if ((chicken.x - map.x) % 64 == 0)
+            if ((chicken.maze_x) % 64 == 0)
             {
                 if(!get_wall(new_x, new_y))
                 {
-                    map.y += chicken.speed;
+                    chicken.maze_y -= chicken.speed;
                 }   
             }
             else
             {
                 if (!get_wall(new_x, new_y) && !get_wall(new_x + 1, new_y))
                 {
-                    map.y += chicken.speed;
+                    chicken.maze_y -= chicken.speed;
                 }
             }
         }
@@ -205,34 +205,49 @@ void Game::actions()
 
     if (controls.down)
     {
-        new_x = static_cast<int>((chicken.x - map.x) / 64);
-        new_y = static_cast<int>((chicken.y - (map.y - chicken.speed)) / 64);
+        new_x = static_cast<int>(chicken.maze_x / 64);
+        new_y = static_cast<int>((chicken.maze_y + chicken.speed) / 64);
         if (cur_y == new_y)
         {
-            map.y -= chicken.speed;
+            chicken.maze_y += chicken.speed;
         }
         else
         {
             
-            if ((chicken.x - map.x) % 64 == 0)
+            if (chicken.maze_x % 64 == 0)
             {
                 if(!get_wall(new_x, new_y + 1))
                 {
-                    map.y -= chicken.speed;
+                    chicken.maze_y += chicken.speed;
                 }   
             }
             else
             {
                 if (!get_wall(new_x, new_y + 1) && !get_wall(new_x + 1, new_y + 1))
                 {
-                    map.y -= chicken.speed;
+                    chicken.maze_y += chicken.speed;
                 }
             }
         }
     }
 
-    chicken.x = SCREEN_WIDTH / 2 - 32;
-    chicken.y = SCREEN_HEIGHT / 2 - 32;
+    if (chicken.maze_x <= SCREEN_WIDTH / 2 - 32)
+        map.x = 0;
+    else if ((chicken.maze_x > SCREEN_WIDTH / 2 - 32) && (chicken.maze_x <= map.pixel_width - (SCREEN_WIDTH / 2 + 32)))
+        map.x = -(chicken.maze_x - (SCREEN_WIDTH / 2 - 32));
+    else
+        map.x = -(map.pixel_width - SCREEN_WIDTH);
+
+    if (chicken.maze_y <= SCREEN_HEIGHT / 2 - 32)
+        map.y = 0;
+    else if ((chicken.maze_y > SCREEN_HEIGHT / 2 - 32) && (chicken.maze_y <= map.pixel_height - (SCREEN_HEIGHT / 2 + 32)))
+        map.y = -(chicken.maze_y - (SCREEN_HEIGHT / 2 - 32));
+    else
+        map.y = -(map.pixel_height - SCREEN_HEIGHT);
+
+    chicken.x = chicken.maze_x + map.x;
+    chicken.y = chicken.maze_y + map.y;
+    
 }
 
 void Game::draw()

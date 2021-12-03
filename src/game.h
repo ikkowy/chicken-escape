@@ -32,6 +32,7 @@ private:
         bool lookleft = false;
         int lifepoints = 5;
         int x, y;
+        int maze_x = 96, maze_y = 96;
         int speed = 4;
     } chicken;
 
