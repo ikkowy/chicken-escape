@@ -65,7 +65,7 @@ void Game::run()
         switch (event.type)
         {
             case ALLEGRO_EVENT_TIMER:
-                actions();
+                running = actions();
                 redraw = true;
                 break;
 
@@ -112,8 +112,9 @@ void Game::run()
     cleanup();
 }
 
-void Game::actions()
+bool Game::actions()
 {
+    bool result = true;
     int cur_x, cur_y, new_x, new_y;
     cur_x = static_cast<int>(chicken.maze_x / 64);
     cur_y = static_cast<int>(chicken.maze_y / 64);
@@ -248,6 +249,12 @@ void Game::actions()
     chicken.x = chicken.maze_x + map.x;
     chicken.y = chicken.maze_y + map.y;
     
+    if ((chicken.maze_x >= map.pixel_width - 192) && (chicken.maze_y >= map.pixel_height - 192))
+    {
+        result = false;
+        std::cout << "Congratulations, you won the game!\n";
+    }
+    return result;
 }
 
 void Game::draw()

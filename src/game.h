@@ -18,7 +18,7 @@ public:
 private:
     void init();
     void cleanup();
-    void actions();
+    bool actions();
     void draw();
 
     struct {
