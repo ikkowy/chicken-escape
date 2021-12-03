@@ -36,7 +36,7 @@ void Game::init()
 
     al_set_display_icon(display, bitmaps.chicken);
 
-    create_map(50, 30, 0.1);
+    create_map(52, 31, 0.1);
     build_maze();
     draw_map();
 
@@ -53,7 +53,7 @@ void Game::run()
 
     al_start_timer(timer);
     
-    play_audio();
+    play_music();
 
     // Main loop
     while (running)
@@ -65,7 +65,7 @@ void Game::run()
         switch (event.type)
         {
             case ALLEGRO_EVENT_TIMER:
-                actions();
+                running = actions();
                 redraw = true;
                 break;
 
@@ -74,6 +74,7 @@ void Game::run()
                 break;
 
             case ALLEGRO_EVENT_KEY_DOWN:
+                sfx_walk(true);
                 switch (event.keyboard.keycode)
                 {
                     case ALLEGRO_KEY_LEFT: controls.left = true; break;
@@ -81,10 +82,13 @@ void Game::run()
                     case ALLEGRO_KEY_UP: controls.up = true; break;
                     case ALLEGRO_KEY_DOWN: controls.down = true; break;
                     case ALLEGRO_KEY_M: control_audio(); break;
+                    case ALLEGRO_KEY_PGDN: control_music_volume(1); break;
+                    case ALLEGRO_KEY_PGUP: control_music_volume(2); break;
                 }
                 break;
 
             case ALLEGRO_EVENT_KEY_UP:
+                sfx_walk(false);
                 switch (event.keyboard.keycode)
                 {
                     case ALLEGRO_KEY_LEFT: controls.left = false; break;
@@ -93,7 +97,6 @@ void Game::run()
                     case ALLEGRO_KEY_DOWN: controls.down = false; break;
                 }
                 break;
-            
         }
 
 		if (redraw && al_is_event_queue_empty(queue))
@@ -109,32 +112,149 @@ void Game::run()
     cleanup();
 }
 
-void Game::actions()
+bool Game::actions()
 {
+    bool result = true;
+    int cur_x, cur_y, new_x, new_y;
+    cur_x = static_cast<int>(chicken.maze_x / 64);
+    cur_y = static_cast<int>(chicken.maze_y / 64);
     if (controls.left)
     {
-        map.x += chicken.speed;
+        new_x = static_cast<int>((chicken.maze_x - chicken.speed) / 64);
+        new_y = static_cast<int>(chicken.maze_y / 64);
+        if (cur_x == new_x)
+        {
+            chicken.maze_x -= chicken.speed;
+        }
+        else
+        {
+            
+            if (chicken.maze_y % 64 == 0)
+            {
+                if(!get_wall(new_x, new_y))
+                {
+                    chicken.maze_x -= chicken.speed;
+                }   
+            }
+            else
+            {
+                if (!get_wall(new_x, new_y) && !get_wall(new_x, new_y + 1))
+                {
+                    chicken.maze_x -= chicken.speed;
+                }
+            }
+        }
         chicken.lookleft = true;
     }
 
     if (controls.right)
     {
-        map.x -= chicken.speed;
+        new_x = static_cast<int>((chicken.maze_x + chicken.speed) / 64);
+        new_y = static_cast<int>(chicken.maze_y / 64);
+        if (cur_x == new_x)
+        {
+            chicken.maze_x += chicken.speed;
+        }
+        else
+        {
+            
+            if (chicken.maze_y % 64 == 0)
+            {
+                if(!get_wall(new_x + 1, new_y))
+                {
+                    chicken.maze_x += chicken.speed;
+                }   
+            }
+            else
+            {
+                if (!get_wall(new_x + 1, new_y) && !get_wall(new_x + 1, new_y + 1))
+                {
+                    chicken.maze_x += chicken.speed;
+                }
+            }
+        }
         chicken.lookleft = false;
     }
 
     if (controls.up)
     {
-        map.y += chicken.speed;
+        new_x = static_cast<int>(chicken.maze_x / 64);
+        new_y = static_cast<int>((chicken.maze_y - chicken.speed) / 64);
+        if (cur_y == new_y)
+        {
+            chicken.maze_y -= chicken.speed;
+        }
+        else
+        {
+            
+            if ((chicken.maze_x) % 64 == 0)
+            {
+                if(!get_wall(new_x, new_y))
+                {
+                    chicken.maze_y -= chicken.speed;
+                }   
+            }
+            else
+            {
+                if (!get_wall(new_x, new_y) && !get_wall(new_x + 1, new_y))
+                {
+                    chicken.maze_y -= chicken.speed;
+                }
+            }
+        }
     }
 
     if (controls.down)
     {
-        map.y -= chicken.speed;
+        new_x = static_cast<int>(chicken.maze_x / 64);
+        new_y = static_cast<int>((chicken.maze_y + chicken.speed) / 64);
+        if (cur_y == new_y)
+        {
+            chicken.maze_y += chicken.speed;
+        }
+        else
+        {
+            
+            if (chicken.maze_x % 64 == 0)
+            {
+                if(!get_wall(new_x, new_y + 1))
+                {
+                    chicken.maze_y += chicken.speed;
+                }   
+            }
+            else
+            {
+                if (!get_wall(new_x, new_y + 1) && !get_wall(new_x + 1, new_y + 1))
+                {
+                    chicken.maze_y += chicken.speed;
+                }
+            }
+        }
     }
 
-    chicken.x = SCREEN_WIDTH / 2 - 32;
-    chicken.y = SCREEN_HEIGHT / 2 - 32;
+    if (chicken.maze_x <= SCREEN_WIDTH / 2 - 32)
+        map.x = 0;
+    else if ((chicken.maze_x > SCREEN_WIDTH / 2 - 32) && (chicken.maze_x <= map.pixel_width - (SCREEN_WIDTH / 2 + 32)))
+        map.x = -(chicken.maze_x - (SCREEN_WIDTH / 2 - 32));
+    else
+        map.x = -(map.pixel_width - SCREEN_WIDTH);
+
+    if (chicken.maze_y <= SCREEN_HEIGHT / 2 - 32)
+        map.y = 0;
+    else if ((chicken.maze_y > SCREEN_HEIGHT / 2 - 32) && (chicken.maze_y <= map.pixel_height - (SCREEN_HEIGHT / 2 + 32)))
+        map.y = -(chicken.maze_y - (SCREEN_HEIGHT / 2 - 32));
+    else
+        map.y = -(map.pixel_height - SCREEN_HEIGHT);
+
+    chicken.x = chicken.maze_x + map.x;
+    chicken.y = chicken.maze_y + map.y;
+    
+    if ((chicken.maze_x >= map.pixel_width - 192) && (chicken.maze_y >= map.pixel_height - 192))
+    {
+        result = false;
+        std::cout << "Congratulations, you won the game!\n";
+    }
+    return result;
 }
 
 void Game::draw()

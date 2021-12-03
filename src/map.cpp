@@ -45,6 +45,7 @@ void Game::build_maze()
     int i, j, red_int;
     vector<point> neighbour_list, connected_neighbours, redundancy_walls;
     point start_point, cur_p, tmp_p;
+    time_t nTime;
 
     /*set starting point*/
     start_point.x = 1;
@@ -53,6 +54,7 @@ void Game::build_maze()
 
     while (neighbour_list.size() > 0)
     {
+        srand((unsigned) time(&nTime));
         /*choosing current point*/
         cur_p = neighbour_list.at(rand() % neighbour_list.size());
         if (get_wall(cur_p.x, cur_p.y))
@@ -223,6 +225,18 @@ void Game::build_maze()
                     redundancy_walls.erase(redundancy_walls.begin() + i);
                 }
                 i--;
+            }
+        }
+
+        /*remove columns*/
+        for(i = 3; i < map.block_height - 1; i += 3)
+        {
+            for(j = 3; j < map.block_width - 1; j += 3)
+            {
+                if (!(get_wall(j-1,i) || get_wall(j,i-1) || get_wall(j+1,i) || get_wall(j,i+1)))
+                {
+                    set_wall(j,i,0);
+                }
             }
         }
     }
